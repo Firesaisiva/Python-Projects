@@ -2,10 +2,12 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel,QVBoxLayout
 from PyQt5.QtCore import QTimer, QTime, Qt
 
+from PyQt5.QtGui import QFont, QFontDatabase
+
 class DigitalClock(QWidget):
   def __init__(self):
     super().__init__()
-    self.time_label = QLabel("12:00:00",self)
+    self.time_label = QLabel(self)
     self.timer = QTimer(self)
     self.initUI()
 
@@ -25,12 +27,20 @@ class DigitalClock(QWidget):
                                   "color:hsl( 247, 90%, 61%);")
     self.setStyleSheet("background-color: black;")
 
+    font = QFontDatabase.addApplicationFont("DS-DIGIT.TTF")
+    font_family = QFontDatabase.applicationFontFamilies(font)[0]
+    my_font = QFont(font_family,200)
+    self.time_label.setFont(my_font)
+
+    self.timer.timeout.connect(self.update_time)
+    self.timer.start(1000)
+
     self.update_time()
 
 
 
   def update_time(self):
-    current_time = QTime.currentTime().toString("hh:mm:ss")
+    current_time = QTime.currentTime().toString("hh:mm:ss AP")
     self.time_label.setText(current_time)  
 
 if __name__ == "__main__":
