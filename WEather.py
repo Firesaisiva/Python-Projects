@@ -93,8 +93,27 @@ class WeatherApp(QWidget):
       data = response.json()
       if data["cod"] == 200:
         self.display_weather(data)
-    except requests.exceptions.HTTPError:
-      print(response.status_code)
+    except requests.exceptions.HTTPError as http_error:
+      match response.status_code:
+        case 400:
+          print("Bad Request\n Please check your input")
+        case 402:
+          print("Unauthorized\n Invalid API key")
+        case 403:
+          print("Forbidden\nAccess is denied")
+        case 404:
+          print("Not found\n City not found")
+        case 500:
+          print("Internal server error\nPlease try agai later")
+        case 502:
+          print("Bad Gateway\n Invalid response from the server")
+        case 503:
+          print("Service unavailable\n Server is doen")
+        case 504:
+          print("Gateway time out\n NO resonse from the sserver")
+        case _:
+          print(f"HTTP error occured\n {http_error}")
+
     except requests.exceptions.RequestExceptions:
       pass
        
