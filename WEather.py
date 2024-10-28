@@ -96,35 +96,45 @@ class WeatherApp(QWidget):
     except requests.exceptions.HTTPError as http_error:
       match response.status_code:
         case 400:
-          print("Bad Request\n Please check your input")
+          self.display_error("Bad Request\n Please check your input")
         case 402:
-          print("Unauthorized\n Invalid API key")
+          self.display_error("Unauthorized\n Invalid API key")
         case 403:
-          print("Forbidden\nAccess is denied")
+          self.display_error("Forbidden\nAccess is denied")
         case 404:
-          print("Not found\n City not found")
+          self.display_error("Not found\n City not found")
         case 500:
-          print("Internal server error\nPlease try agai later")
+          self.display_error("Internal server error\nPlease try agai later")
         case 502:
-          print("Bad Gateway\n Invalid response from the server")
+          self.display_error("Bad Gateway\n Invalid response from the server")
         case 503:
-          print("Service unavailable\n Server is doen")
+          self.display_error("Service unavailable\n Server is doen")
         case 504:
-          print("Gateway time out\n NO resonse from the sserver")
+          self.display_error("Gateway time out\n NO resonse from the sserver")
         case _:
-          print(f"HTTP error occured\n {http_error}")
-
-    except requests.exceptions.RequestExceptions:
-      pass
-       
-     
+          self.display_error(f"HTTP error occured\n {http_error}")
 
 
+
+    except requests.exceptions.ConnectionError:
+      self.display_error("connection erro\n Checck your intermet connction")
+    except requests.exceptions.Timeout:
+      self.display_error("Timeout Error:\nThe request timed out")
+    except requests.exceptions.TooManyRedirects:
+      self.display_error("Too many Redirrects:\n Check the url")
+    except requests.exceptions.RequestException as req_error:
+      self.display_error(f"Request error:\n{req_error}")
 
   def display_error(self,message):
-    pass
+    self.temperature_label.setStyleSheet("color:red;")
+    self.temperature_label.setText(message)
   def display_weather(self,data):
-    print(data)
+    temperature_k = data["main"]["temp"]
+    temperature_c = temperature_k -273.15
+    temperature_f = (temperature_k * 9/5) -459.67
+    print(temperature_f)
+    
+    
 
 
 
